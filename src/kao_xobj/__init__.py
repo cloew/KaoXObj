@@ -1,16 +1,20 @@
 
-def xobj_getattr(obj, attrName):
+def xobj_getattr(obj, attrName, *args):
     """ Return the value for the attr given following any .attrs """
+    checkExists = len(args) > 0
     value = obj
     attrs = attrName.split('.')
     for attr in attrs:
-        value = getattr(value, attr)
+        if not checkExists or hasattr(value, attr):
+            value = getattr(value, attr)
+        else:
+            return args[0]
     return value
     
 def xobj_attrgetter(attrName):
     """ Return the value for the attr given following any .attrs """
-    def getValue(obj):
-        return xobj_getattr(obj, attrName)
+    def getValue(obj, *args):
+        return xobj_getattr(obj, attrName, *args)
     return getValue
 
 def xobj_setattr(obj, attrName, value):
